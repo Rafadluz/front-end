@@ -13,20 +13,23 @@ navigator.mediaDevices.getUserMedia({ video: true})
     });
 
 botao.addEventListener("click", () => {
+
     contexto.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const imageDataUrl = canvas.toDataUrl("image/png");
+    const imageDataURL = canvas.toDataURL("image/png");
 
     enviarImagemParaServidor(imageDataURL);
 })
 function enviarImagemParaServidor(imageDataURL){
     console.log("Enviando imagem para o servidor...");
 
-    fetch("/", {
+    const base64String = imageDataURL.split(',')[1];
+
+    fetch("http://DOP3080-1247456:8000/images", {
         method: "POST",
-        body: JSON.stringify({Image: imageDataURL}),
+        body: JSON.stringify({ image: base64String, mime_type:'image/png' }),
         headers: {
-            "Content-Type": "app"
+            "Content-Type": "application/json"
         }
     })
         .then(resposta => resposta.json())
